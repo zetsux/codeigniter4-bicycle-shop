@@ -16,8 +16,8 @@ class UsersController extends BaseController
     $model = new Users();
     $data = $model->findAll();
     $response = [
-      'status'   => 200,
-      'error'    => null,
+      'status' => 200,
+      'error' => null,
       'messages' => 'Data Found',
       'data' => $data
     ];
@@ -30,8 +30,8 @@ class UsersController extends BaseController
     $model = new Users();
     $data = $model->where('id', $id)->first();
     $response = [
-      'status'   => 200,
-      'error'    => null,
+      'status' => 200,
+      'error' => null,
       'messages' => 'Data Found',
       'data' => $data
     ];
@@ -42,6 +42,7 @@ class UsersController extends BaseController
   public function create()
   {
     $uuid = (string) Uuid::uuid();
+    $cartId = (string) Uuid::uuid();
 
     $data = [
       'id' => $uuid,
@@ -51,6 +52,7 @@ class UsersController extends BaseController
       'address' => $this->request->getVar('address'),
       'phone' => $this->request->getVar('phone'),
       'role' => 'user',
+      'cart_id' => $cartId,
     ];
 
     $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -61,23 +63,8 @@ class UsersController extends BaseController
     if ($user) {
       return redirect()->back()->with('error', 'Email sudah digunakan');
     }
-    // if ($user) {
-    //   $response = [
-    //     'status'   => 500,
-    //     'error'    => 'Email Already Exist',
-    //     'messages' => 'Register Failed',
-    //   ];
-    //   return $this->respond($response);
-    // }
 
     $model->insert($data);
-    // $response = [
-    //   'status'   => 201,
-    //   'error'    => null,
-    //   'messages' => 'Data Saved',
-    //   'data' => $data
-    // ];
-    // return $this->respondCreated($response);
     return view('auth/login');
   }
 
@@ -91,36 +78,15 @@ class UsersController extends BaseController
       $verify_pass = password_verify($password, $data['password']);
 
       if ($verify_pass) {
-        // $response = [
-        //   'status'   => 200,
-        //   'error'    => null,
-        //   'messages' => 'Login Success',
-        //   'data' => $ses_data
-        // ];
-        // return $this->respond($response);
         $session = \Config\Services::session();
         $session->set('id', $data['id']);
         $session->set('username', $data['username']);
         $session->set('role', $data['role']);
         return redirect()->route('home.index');
-      } else {
-        // $response = [
-        //   'status'   => 500,
-        //   'error'    => 'Password Salah',
-        //   'messages' => 'Login Failed',
-        // ];
-        // return $this->respond($response);
+      } else
         return redirect()->back()->with('error', 'Password salah');
-      }
-    } else {
-      // $response = [
-      //   'status'   => 500,
-      //   'error'    => 'Email Salah',
-      //   'messages' => 'Login Failed',
-      // ];
-      // return $this->respond($response);
+    } else
       return redirect()->back()->with('error', 'Email salah');
-    }
   }
 
   public function update($id)
@@ -136,38 +102,16 @@ class UsersController extends BaseController
     ];
 
     $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-
     $model->update($id, $data);
-    // $response = [
-    //   'status'   => 200,
-    //   'error'    => null,
-    //   'messages' => 'Data Updated',
-    //   'data' => $data
-    // ];
-    // return $this->respond($response);
   }
 
   public function delete($id)
   {
     $model = new Users();
     $data = $model->find($id);
-    if ($data) {
+    if ($data)
       $model->delete($id);
-      // $response = [
-      //   'status'   => 200,
-      //   'error'    => null,
-      //   'messages' => 'Data Deleted',
-      //   'data' => $data
-      // ];
-      // return $this->respondDeleted($response);
-    } else {
-      // $response = [
-      //   'status'   => 500,
-      //   'error'    => 'Data Not Found',
-      //   'messages' => 'Data Not Found',
-      // ];
-      // return $this->respond($response);
+    else
       return redirect()->back()->with('error', 'Pengguna tidak ditemukan');
-    }
   }
 }

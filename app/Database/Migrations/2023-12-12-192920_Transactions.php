@@ -25,6 +25,10 @@ class Transactions extends Migration
                 'type' => 'TEXT',
                 'null' => true,
             ],
+            'total_price' => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
+            ],
             'payment_method' => [
                 'type' => 'VARCHAR',
                 'constraint' => '100',

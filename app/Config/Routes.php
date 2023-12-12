@@ -5,7 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'BooksController::index', ['as' => 'home.index']);
+$routes->get('/', 'BikesController::index', ['as' => 'home.index']);
 $routes->get('/register', 'Home::register', ['as' => 'home.register']);
 $routes->get('/login', 'Home::login', ['as' => 'home.login']);
 $routes->get('/logout', 'Home::logout', ['as' => 'home.logout']);
@@ -19,19 +19,26 @@ $routes->group('user', function ($routes) {
   $routes->delete('delete/(:segment)', 'UsersController::delete/$1');
 });
 
-$routes->group('book', function ($routes) {
-  $routes->get('', 'BooksController::index');
-  $routes->get('(:segment)', 'BooksController::show/$1');
-  $routes->post('create', 'BooksController::create');
-  $routes->put('update/(:segment)', 'BooksController::update/$1');
-  $routes->delete('delete/(:segment)', 'BooksController::delete/$1');
+$routes->group('bike', function ($routes) {
+  $routes->get('', 'BikesController::index');
+  $routes->get('(:segment)', 'BikesController::show/$1');
+  $routes->post('create', 'BikesController::create');
+  $routes->put('update/(:segment)', 'BikesController::update/$1');
+  $routes->delete('delete/(:segment)', 'BikesController::delete/$1');
+});
+
+$routes->group('cart', function ($routes) {
+  $routes->get('', 'CartController::index');
+  $routes->get('(:segment)', 'CartController::show/$1');
+  $routes->post('create', 'CartController::create');
+  $routes->post('add', 'CartController::addToCart');
+  $routes->put('change_count', 'CartController::changeProductCount');
 });
 
 $routes->group('transaction', function ($routes) {
   $routes->get('', 'TransactionsController::index', ['as' => 'transaction.history']);
   $routes->get('(:segment)', 'TransactionsController::show/$1');
-  $routes->post('prepare', 'TransactionsController::prepare', ['as' => 'transaction.prepare']);
+  // $routes->post('prepare', 'TransactionsController::prepare', ['as' => 'transaction.prepare']);
   $routes->post('payment', 'TransactionsController::payment', ['as' => 'transaction.payment']);
-  $routes->put('update/(:segment)', 'TransactionsController::update/$1');
   $routes->delete('delete/(:segment)', 'TransactionsController::delete/$1');
 });

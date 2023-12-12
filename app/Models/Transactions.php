@@ -17,6 +17,7 @@ class Transactions extends Model
     'id',
     'user_id',
     'cart_id',
+    'total_price',
     'address',
     'payment_method',
   ];
