@@ -91,6 +91,13 @@ class UsersController extends BaseController
 
   public function update($id)
   {
+    $session = \Config\Services::session();
+    if (!$session->has('id'))
+      return view('auth/login');
+
+    if ($session->get('role') != 'admin')
+      return redirect()->back()->with('error', 'Akses ditolak');
+
     $model = new Users();
     $data = [
       'username' => $this->request->getVar('username'),
@@ -107,6 +114,13 @@ class UsersController extends BaseController
 
   public function delete($id)
   {
+    $session = \Config\Services::session();
+    if (!$session->has('id'))
+      return view('auth/login');
+
+    if ($session->get('role') != 'admin')
+      return redirect()->back()->with('error', 'Akses ditolak');
+
     $model = new Users();
     $data = $model->find($id);
     if ($data)

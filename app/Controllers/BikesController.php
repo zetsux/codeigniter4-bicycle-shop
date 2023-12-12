@@ -31,6 +31,13 @@ class BikesController extends BaseController
 
     public function create()
     {
+        $session = \Config\Services::session();
+        if (!$session->has('id'))
+            return view('auth/login');
+
+        if ($session->get('role') != 'admin')
+            return redirect()->back()->with('error', 'Akses ditolak');
+
         $data = [
             'id' => Uuid::uuid(),
             'brand' => $this->request->getVar('brand'),
@@ -49,6 +56,13 @@ class BikesController extends BaseController
 
     public function update($id)
     {
+        $session = \Config\Services::session();
+        if (!$session->has('id'))
+            return view('auth/login');
+
+        if ($session->get('role') != 'admin')
+            return redirect()->back()->with('error', 'Akses ditolak');
+
         $model = new Bikes();
         $data = [
             'brand' => $this->request->getVar('brand'),
@@ -66,6 +80,13 @@ class BikesController extends BaseController
 
     public function delete($id)
     {
+        $session = \Config\Services::session();
+        if (!$session->has('id'))
+            return view('auth/login');
+
+        if ($session->get('role') != 'admin')
+            return redirect()->back()->with('error', 'Akses ditolak');
+
         $model = new Bikes();
         $data = $model->find($id);
 
