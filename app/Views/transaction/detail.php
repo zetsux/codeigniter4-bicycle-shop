@@ -23,14 +23,14 @@ if (!$session->has('username') || !$session->has('role') || !$session->has('id')
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-      * {
+    * {
       font-family: 'Poppins', sans-serif;
-      }
+    }
   </style>
 </head>
 
 <body>
-  <?php echo view('layouts/navbar')?>
+  <?php echo view('layouts/navbar') ?>
   <main class="min-h-screen py-32 w-10/12 mx-auto space-y-6">
     <div class="flex items-center gap-2.5">
       <a href="/" class="text-slate-400">Home</a>
@@ -40,81 +40,33 @@ if (!$session->has('username') || !$session->has('role') || !$session->has('id')
       <p class="text-slate-600">Detail</p>
     </div>
     <h1 class="text-2xl font-semibold">Detail Transaksi</h1>
-    <section class="">
-      <section class="mt-6 flex flex-col lg:flex-row gap-12">
-        <div>
-          <div class="p-3.5 bg-white rounded shadow w-fit">
-            <img src="<?= $book['cover'] ?>" alt="">
-          </div>
-        </div>
-        <div class="space-y-7 lg:w-1/2">
-          <div>
-            <p class="text-slate-400"><?= $book['author'] ?></p>
-            <p class="text-3xl font-medium"><?= $book['title'] ?></p>
+    <section class="space-y-3">
+      <?php foreach ($products as $product) : ?>
+        <div class="bg-white shadow-sm border !border-gray-100 rounded-md px-4 py-3 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <p><span class="font-medium">Product Name</span> : <?= $product['name'] ?></p>
+            <p class="text-[15px]">Date : <?= $product['created_at'] ?></p>
           </div>
           <div class="h-px w-full bg-slate-200"></div>
-          <div>
-            <p class="text-[17px] font-medium">Detail Produk Buku</p>
-            <table class="mt-2 text-[15px] border-separate border-spacing-2 w-full">
-              <tbody>
-                <tr>
-                  <td class="font-medium text-sky-700 align-top">Penerbit</td>
-                  <td class="align-top">:</td>
-                  <td><?= $book['publisher'] ?></td>
-                </tr>
-                <tr>
-                  <td class="font-medium text-sky-700 align-top">Genre</td>
-                  <td class="align-top">:</td>
-                  <td><?= $book['genre'] ?></td>
-                </tr>
-                <tr>
-                  <td class="font-medium text-sky-700 align-top">Deskripsi</td>
-                  <td class="align-top">:</td>
-                  <td><?= $book['description'] ?></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <p class="text-[17px] font-medium">Detail Pembayaran</p>
-            <div class="grid grid-cols-2">
-              <table class="mt-2 text-[15px] border-separate border-spacing-2">
-                <tbody>
-                  <tr>
-                    <td class="font-medium text-sky-700 align-top">Jumlah</td>
-                    <td class="align-top">:</td>
-                    <td><?= $transaction['count'] ?> Buku</td>
-                  </tr>
-                  <tr>
-                    <td class="font-medium text-sky-700 align-top">Total</td>
-                    <td class="align-top">:</td>
-                    <td>Rp <?= number_format($transaction['total_price']) ?></td>
-                  </tr>
-                </tbody>
-              </table>
-              <table class="mt-2 text-[15px] border-separate border-spacing-2">
-                <tbody>
-                  <tr>
-                    <td class="font-medium text-sky-700 align-top">Metode</td>
-                    <td class="align-top">:</td>
-                    <td><?= $transaction['payment_method'] ?></td>
-                  </tr>
-                  <tr>
-                    <td class="font-medium text-sky-700 align-top">Alamat</td>
-                    <td class="align-top">:</td>
-                    <td><?= $transaction['address'] ?></td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="flex items-end justify-between">
+            <div class="flex items-center justify-between w-full">
+              <div class="flex items-center gap-6 w-full">
+                <div class="p-2 bg-white rounded w-fit"><img src="<?= $product['image'] ?>" alt="" width="60px"></div>
+                <div class="text-sm grow">
+                  <p> <span class="font-medium">Category :</span> <?= $product['category'] ?></p>
+                  <p> <span class="font-medium">Brand :</span> <?= $product['brand'] ?></p>
+                  <p> <span class="font-medium">Color :</span> <?= $product['color'] ?></p>
+                  <p> <span class="font-medium">Jumlah Barang :</span> <?= $product['count'] ?></p>
+                </div>
+              </div>
+              <div class="text-[15px] shrink-0 self-end text-end">
+                <p class="font-semibold">Total Harga</p>
+                <p>Rp <?= $product['price'] ?></p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6 grow h-fit space-y-2.5 w-1/4">
-          <p class="font-medium">Ada pertanyaan?</p>
-          <p class="text-sm">Silahkan menanyakan produk ini kepada customer service kami dengan cara menekan tombol Tanya Produk di bawah ini.</p>
-          <button class="rounded-lg bg-white text-sky-700 border-[1.5px] border-sky-600 w-full px-4 min-h-[2.25rem] md:min-h-[2.5rem] flex items-center justify-center text-sm mt-3">Tanya Produk</button>
-        </div>
-      </section>
+      <?php endforeach ?>
     </section>
     <!-- <table class="table table-bordered table-hover mt-2">
       <thead class="thead-light">
@@ -130,13 +82,6 @@ if (!$session->has('username') || !$session->has('role') || !$session->has('id')
       </thead>
       <tbody>
         <tr>
-          <td><?= $transaction['id'] ?></td>
-          <td><?= $transaction['user_id'] ?></td>
-          <td><?= $transaction['book_id'] ?></td>
-          <td><?= $transaction['total_price'] ?></td>
-          <td><?= $transaction['count'] ?></td>
-          <td><img src="<?= $book['cover'] ?>"></td>
-          <td><?= $book['title'] ?></td>
         </tr>
       </tbody>
     </table> -->

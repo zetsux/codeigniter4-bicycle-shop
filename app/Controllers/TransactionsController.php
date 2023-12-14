@@ -22,8 +22,17 @@ class TransactionsController extends BaseController
 
     $userId = $session->get('id');
     $model = new Transactions();
-    $data['transactions'] = $model->select('transactions.id as transaction_id, transactions.*, cart_products.*')
-      ->join('cart_products', 'cart_products.cart_id = transactions.cart_id')->where('transactions.user_id', $userId)->findAll();
+    $data['transactions'] = $model->where('user_id', $userId)->findAll();
+
+    $bike = new Bikes();
+    $cart = new CartProducts();
+    for ($i = 0; $i < count($data['transactions']); $i++) {
+      $data['transactions'][$i]['product'] = $cart->where('cart_id', $data['transactions'][$i]['cart_id'])->first();
+      $data['transactions'][$i]['bike'] = $bike->where('id', $data['transactions'][$i]['product']['bike_id'])->first();
+    }
+
+    // $data['transactions'] = $model->select('transactions.id as transaction_id, transactions.*, cart_products.*')
+    //   ->join('cart_products', 'cart_products.cart_id = transactions.cart_id')->where('transactions.user_id', $userId)->findAll();
 
     return view('transaction/history', $data);
   }
@@ -34,9 +43,43 @@ class TransactionsController extends BaseController
     $data['transaction'] = $transaction->where('id', $id)->first();
 
     $products = new CartProducts();
-    $data['products'] = $products->where('cart_id', $data['transaction']['cart_id'])->findAll();
+    $data['products'] = $products->select('cart_products.id as product_id, cart_products.*, bikes.*')
+      ->join('bikes', 'bikes.id = cart_products.bike_id')->where('cart_products.cart_id', $data['transaction']['cart_id'])->findAll();
 
     return view('transaction/detail', $data);
+  }
+
+  public function prepare()
+  {
+    $session = \Config\Services::session();
+    if (!$session->has('id'))
+      return view('auth/login');
+
+    $userId = $session->get('id');
+    $cartId = $this->request->getVar('cart_id');
+
+    $user = new Users();
+    if (!$user->find($userId)) {
+      return redirect()->back()->with('error', 'ID Pengguna tidak valid');
+    }
+
+    $cart = new CartProducts();
+    $data['products'] = $cart->select('cart_products.id as product_id, cart_products.*, bikes.*')
+      ->join('bikes', 'bikes.id = cart_products.bike_id')->where('cart_products.cart_id', $cartId)->findAll();
+
+    if (count($data['products']) <= 0) {
+      return redirect()->back()->with('error', 'Keranjang kosong');
+    }
+
+    $priceSum = 0;
+    foreach ($data['products'] as $pr) {
+      $priceSum += $pr['total_price'];
+    }
+    $data['total_price'] = $priceSum;
+    $data['cart_id'] = $cartId;
+    $data['address'] = $user->where('id', $userId)->first()['address'];
+
+    return view('transaction/confirm', $data);
   }
 
   public function payment()
@@ -51,6 +94,7 @@ class TransactionsController extends BaseController
       'cart_id' => $this->request->getVar('cart_id'),
       'address' => $this->request->getVar('address'),
       'payment_method' => $this->request->getVar('payment_method'),
+      'total_price' => $this->request->getVar('total_price'),
     ];
 
     $userModel = new Users();
@@ -59,21 +103,15 @@ class TransactionsController extends BaseController
       return redirect()->back()->with('error', 'ID Pengguna tidak valid');
     }
 
-    $cpModel = new CartProducts();
-    $cartProducts = $cpModel->where('cart_id', $data['cart_id'])->findAll();
-    if (!$cartProducts) {
-      return redirect()->back()->with('error', 'Keranjang belanja kosong');
-    }
+    $cart = new CartProducts();
+    $data['products'] = $cart->select('cart_products.id as product_id, cart_products.*, bikes.*')
+      ->join('bikes', 'bikes.id = cart_products.bike_id')->where('cart_products.cart_id', $data['cart_id'])->findAll();
 
     $bike = new Bikes();
-    $priceSum = 0;
-    foreach ($cartProducts as $pr) {
-      $priceSum += $pr['total_price'];
-
+    foreach ($data['products'] as $pr) {
       $curStock = $bike->where('id', $pr['bike_id'])->first()['stock'];
       $bike->update($pr['bike_id'], ['stock' => $curStock - $pr['count']]);
     }
-    $data['total_price'] = $priceSum;
 
     $trans = new Transactions();
     $trans->insert($data);

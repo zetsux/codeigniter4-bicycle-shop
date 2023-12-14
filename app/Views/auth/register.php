@@ -14,7 +14,7 @@
     <div class="bg-white p-6 xs:p-8 md:p-10 rounded-3xl md:shadow-2xl space-y-6 w-full max-w-[26rem] mx-auto">
       <div class='space-y-1'>
         <h2 class='text-2xl font-bold'>Daftar</h2>
-        <p class='text-black/70'>Untuk mendapatkan akun MediaIlmu</p>
+        <p class='text-black/70'>Untuk mendapatkan akun SepedaKuy</p>
       </div>
       <form action="<?= route_to('user.create') ?>" method="POST" class="space-y-2.5">
         <?php if (session()->getFlashdata('error')) { ?>

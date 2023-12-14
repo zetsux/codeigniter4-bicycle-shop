@@ -21,7 +21,6 @@ class Bikes extends Model
         'description',
         'price',
         'stock',
-        'color',
         'image',
     ];
 

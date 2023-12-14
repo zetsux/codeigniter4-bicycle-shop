@@ -30,7 +30,8 @@ class CartController extends BaseController
     }
 
     $cpModel = new CartProducts();
-    $data['products'] = $cpModel->where('cart_id', $user['cart_id'])->findAll();
+    $data['products'] = $cpModel->select('cart_products.id as product_id, cart_products.*, bikes.*')
+      ->join('bikes', 'bikes.id = cart_products.bike_id')->where('cart_products.cart_id', $user['cart_id'])->findAll();
 
     return view('cart/list', $data);
   }
@@ -42,6 +43,7 @@ class CartController extends BaseController
 
     return view('cart/detail', $data);
   }
+
   public function addToCart()
   {
     $session = \Config\Services::session();
@@ -52,6 +54,7 @@ class CartController extends BaseController
     $product = [
       'bike_id' => $this->request->getVar('bike_id'),
       'total_price' => $this->request->getVar('total_price'),
+      'color' => $this->request->getVar('color'),
       'count' => $this->request->getVar('count'),
     ];
 
@@ -61,26 +64,40 @@ class CartController extends BaseController
       return redirect()->back()->with('error', 'ID Pengguna tidak valid');
     }
 
-    $bike = new Bikes();
-    if (!$bike->find($product['bike_id'])) {
+    $bikeModel = new Bikes();
+    $bike = $bikeModel->find($product['bike_id']);
+    if (!$bike) {
       return redirect()->back()->with('error', 'ID Sepeda tidak valid');
     }
 
     $cpModel = new CartProducts();
-    $cartProduct = $cpModel->where('cart_id', $user['cart_id'])->where('bike_id', $product['bike_id'])->find();
+    $cartProduct = $cpModel->where('cart_id', $user['cart_id'])
+      ->where('color', $product['color'])->where('bike_id', $product['bike_id'])->find();
 
     if ($cartProduct) {
+      $cartProduct = $cartProduct[0];
       $addProduct = [
         'count' => $cartProduct['count'] + $product['count'],
         'total_price' => $cartProduct['total_price'] + $product['total_price'],
       ];
+
+      if ($addProduct['count'] > $bike['stock']) {
+        return redirect()->back()->with('error', 'Stok sepeda tidak cukup');
+      }
       $cpModel->update($cartProduct['id'], $addProduct);
     } else {
+      if ($product['count'] > $bike['stock']) {
+        return redirect()->back()->with('error', 'Stok sepeda tidak cukup');
+      }
+
       $product['cart_id'] = $user['cart_id'];
+      $product['id'] = Uuid::uuid();
       $cpModel->insert($product);
     }
 
-    return redirect()->to('/bike/' . $product['bike_id']);
+    // $session->setFlashdata('cartNotif', 1);
+    sleep(1);
+    return redirect()->to('/bike/' . $product['bike_id'])->with('cartNotif', 1);
 
     // $data['product'] = $transaction;
     // $data['bike'] = $bike->where('id', $transaction['bike_id'])->first();
@@ -89,20 +106,20 @@ class CartController extends BaseController
     // return view('transaction/confirm', $data);
   }
 
-  public function changeProductCount($id)
+  public function changeProductCount()
   {
     $session = \Config\Services::session();
     if (!$session->has('id'))
       return view('auth/login');
 
-    $userId = $session->get('id');
+    $productId = $this->request->getVar('id');
     $newCount = $this->request->getVar('count');
 
     $cpModel = new CartProducts();
-    $cartProduct = $cpModel->where('id', $id)->first();
+    $cartProduct = $cpModel->where('id', $productId)->first();
 
-    if ($newCount == 0) {
-      $cpModel->delete($id);
+    if ($newCount <= 0) {
+      $cpModel->delete($productId);
     } else {
       $initPrice = $cartProduct['total_price'] / $cartProduct['count'];
       $editedProd = [
@@ -110,7 +127,7 @@ class CartController extends BaseController
         'total_price' => $initPrice * $newCount,
       ];
 
-      $cpModel->update($id, $editedProd);
+      $cpModel->update($productId, $editedProd);
     }
 
     return redirect()->to('/cart');

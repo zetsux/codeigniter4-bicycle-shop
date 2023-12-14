@@ -82,7 +82,9 @@ class UsersController extends BaseController
         $session->set('id', $data['id']);
         $session->set('username', $data['username']);
         $session->set('role', $data['role']);
-        return redirect()->route('home.index');
+
+        if ($data['role'] == 'admin') return redirect()->route('admin.bike');
+        else return redirect()->route('home.index');
       } else
         return redirect()->back()->with('error', 'Password salah');
     } else

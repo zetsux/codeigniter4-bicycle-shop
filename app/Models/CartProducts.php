@@ -18,6 +18,7 @@ class CartProducts extends Model
     'cart_id',
     'bike_id',
     'count',
+    'color',
     'total_price',
   ];
 

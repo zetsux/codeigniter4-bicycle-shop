@@ -14,9 +14,8 @@ class BikesController extends BaseController
     public function index()
     {
         $model = new Bikes();
-        $data['bikes'] = $model->findAll();
+        $data['bikes'] = $model->orderBy('created_at', 'DESC')->findAll();
 
-        // return $this->respond($response);
         return view('welcome_message', $data);
     }
 
@@ -46,12 +45,13 @@ class BikesController extends BaseController
             'description' => $this->request->getVar('description'),
             'price' => $this->request->getVar('price'),
             'stock' => $this->request->getVar('stock'),
-            'color' => $this->request->getVar('color'),
             'image' => $this->request->getVar('image'),
         ];
 
         $model = new Bikes();
         $model->insert($data);
+
+        return redirect()->to('/admin/bike');
     }
 
     public function update($id)
@@ -71,11 +71,11 @@ class BikesController extends BaseController
             'description' => $this->request->getVar('description'),
             'price' => $this->request->getVar('price'),
             'stock' => $this->request->getVar('stock'),
-            'color' => $this->request->getVar('color'),
             'image' => $this->request->getVar('image'),
         ];
 
         $model->update($id, $data);
+        return redirect()->to('/admin/bike');
     }
 
     public function delete($id)
@@ -90,9 +90,9 @@ class BikesController extends BaseController
         $model = new Bikes();
         $data = $model->find($id);
 
-        if ($data)
-            $model->delete($id);
-        else
-            return redirect()->back()->with('error', 'Sepeda tidak ditemukan');
+        if ($data) $model->delete($id);
+        else return redirect()->back()->with('error', 'Sepeda tidak ditemukan');
+
+        return redirect()->to('/admin/bike');
     }
 }

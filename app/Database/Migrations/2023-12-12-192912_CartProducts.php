@@ -25,6 +25,10 @@ class CartProducts extends Migration
                 'type' => 'INTEGER',
                 'constraint' => '10',
             ],
+            'color' => [
+                'type' => 'VARCHAR',
+                'constraint' => '100',
+            ],
             'total_price' => [
                 'type' => 'DECIMAL',
                 'constraint' => '10,2',

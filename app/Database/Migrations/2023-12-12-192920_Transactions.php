@@ -46,7 +46,6 @@ class Transactions extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('cart_id', 'cart_products', 'cart_id', 'CASCADE', 'CASCADE');
 
         $this->forge->createTable('transactions');
         $this->db->query('ALTER TABLE transactions MODIFY created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');

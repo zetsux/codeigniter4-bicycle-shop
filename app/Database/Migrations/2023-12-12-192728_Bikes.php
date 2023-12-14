@@ -37,13 +37,8 @@ class Bikes extends Migration
                 'type' => 'INTEGER',
                 'constraint' => '10',
             ],
-            'color' => [
-                'type' => 'VARCHAR',
-                'constraint' => '100',
-            ],
             'image' => [
-                'type' => 'VARCHAR',
-                'constraint' => '100',
+                'type' => 'TEXT'
             ],
             'created_at' => [
                 'type' => 'TIMESTAMP',
