@@ -84,7 +84,7 @@ if (!$session->has('username') || !$session->has('role') || !$session->has('id')
                   </button>
                 </form>
               </div>
-              <a href="/transaction/<?= $product['id'] ?>" class="rounded-lg bg-slate-500 text-white w-fit px-4 min-h-[2.25rem] md:min-h-[2.5rem] flex items-center justify-center text-sm">Lihat Detail</a>
+              <a href="/bike/<?= $product['id'] ?>" class="rounded-lg bg-slate-500 text-white w-fit px-4 min-h-[2.25rem] md:min-h-[2.5rem] flex items-center justify-center text-sm">Lihat Detail</a>
             </div>
           </div>
         </div>
