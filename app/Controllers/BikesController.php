@@ -22,7 +22,11 @@ class BikesController extends BaseController
     public function show($id)
     {
         $model = new Bikes();
-        $data['bike'] = $model->where('id', $id)->first();
+        $data['bike'] = $model->find($id);
+
+        if (!$data['bike']) {
+            return redirect()->back()->with('error', 'Sepeda tidak ditemukan');
+        }
 
         // return $this->respond($response);
         return view('bike/detail', $data);

@@ -15,12 +15,21 @@ $session = \Config\Services::session();
                     <a href="/bike">Catalog</a>
                 </li>
                 <li class="hover:text-slate-500 relative cart-link">
-                    <a href="/cart">Cart</a>
+                    <a href="/cart" class="w-full h-full">Cart</a>
                     <div id="cart-badge" class="absolute -top-2 -right-2 bg-sky-700 text-white font-medium text-xs px-2.5 py-1 rounded-full hidden">1</div>
                 </li>
                 <li class="hover:text-slate-500">
-                    <a href="/transaction">Riwayat</a>
+                    <a href="/transaction">History</a>
                 </li>
+                <?php if ($session->get('role') == 'admin') : ?>
+                    <li class="hover:text-slate-500">
+                        <a href="/admin/bike" class="text-red-500 !decoration-none">Bikes</a>
+                    </li>
+                    <li class="hover:text-slate-500 relative cart-link">
+                        <a href="/admin/sales" class="text-red-500 !decoration-none" class="w-full h-full">Sales</a>
+                        <div id="cart-badge" class="absolute -top-2 -right-2 bg-sky-700 text-white font-medium text-xs px-2.5 py-1 rounded-full hidden">1</div>
+                    </li>
+                <?php endif; ?>
             </ul>
             <button data-popover-target="popover-click" data-popover-trigger="click" type="button" class="text-white bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-200 font-medium rounded-full text-sm px-4 py-2.5 text-center"><?= $session->get('username') ?></button>
             <div data-popover id="popover-click" role="tooltip" class="absolute z-10 invisible w-48 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 p-2">

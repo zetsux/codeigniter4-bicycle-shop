@@ -35,12 +35,25 @@ if (!$session->has('username') || !$session->has('role') || !$session->has('id')
     <div class="flex items-center gap-2.5">
       <a href="/" class="text-slate-400">Home</a>
       <p class="text-slate-400">/</p>
-      <a href="/transaction" class="text-slate-400">Transaksi</a>
+      <?php if ($session->get('role') == 'admin') : ?>
+        <a href="/admin/sales" class="text-slate-400">Sales</a>
+      <?php else : ?>
+        <a href="/transaction" class="text-slate-400">Transaksi</a>
+      <?php endif; ?>
       <p class="text-slate-600">/</p>
       <p class="text-slate-600">Detail</p>
     </div>
     <h1 class="text-2xl font-semibold">Detail Transaksi</h1>
     <section class="space-y-3">
+      <?php if ($session->get('role') == 'admin') : ?>
+        <table class="border-separate border-spacing-2">
+          <tr class="">
+            <td class="font-medium">Customer</td>
+            <td>:</td>
+            <td><?= $user['username'] ?></td>
+          </tr>
+        </table>
+      <?php endif; ?>
       <?php foreach ($products as $product) : ?>
         <div class="bg-white shadow-sm border !border-gray-100 rounded-md px-4 py-3 space-y-2.5">
           <div class="flex items-center justify-between">
@@ -68,23 +81,6 @@ if (!$session->has('username') || !$session->has('role') || !$session->has('id')
         </div>
       <?php endforeach ?>
     </section>
-    <!-- <table class="table table-bordered table-hover mt-2">
-      <thead class="thead-light">
-        <tr>
-          <th>ID</th>
-          <th>User_ID</th>
-          <th>Book_ID</th>
-          <th>Total_Price</th>
-          <th>Count</th>
-          <th>Book Cover</th>
-          <th>Book Title</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        </tr>
-      </tbody>
-    </table> -->
   </main>
 </body>
 
