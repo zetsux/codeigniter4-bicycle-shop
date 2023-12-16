@@ -9,6 +9,7 @@ $routes->get('/', 'BikesController::index', ['as' => 'home.index']);
 $routes->get('/register', 'Home::register', ['as' => 'home.register']);
 $routes->get('/login', 'Home::login', ['as' => 'home.login']);
 $routes->get('/logout', 'Home::logout', ['as' => 'home.logout']);
+$routes->get('/admin/sales', 'AdminsController::sales', ['as' => 'admin.sales']);
 
 $routes->group('user', function ($routes) {
   $routes->get('', 'UsersController::index');

@@ -39,8 +39,20 @@ class TransactionsController extends BaseController
 
   public function show($id)
   {
+    $session = \Config\Services::session();
+    if (!$session->has('id'))
+      return view('auth/login');
+
     $transaction = new Transactions();
-    $data['transaction'] = $transaction->where('id', $id)->first();
+    $user = new Users();
+    $data['transaction'] = $transaction->find($id);
+    $data['user'] = $user->find($data['transaction']['user_id']);
+    if (!$data['transaction']) {
+      return redirect()->back()->with('error', 'Transaksi tidak ditemukan');
+    }
+    if (!$data['user']) {
+      return redirect()->back()->with('error', 'User tidak ditemukan');
+    }
 
     $products = new CartProducts();
     $data['products'] = $products->select('cart_products.id as product_id, cart_products.*, bikes.*')
